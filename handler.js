@@ -95,7 +95,7 @@ module.exports.createPost = (event, context, callback) => {
       path: name,
       message: 'updating file',
       sha: sha,
-      content: Buffer.from("---\r\nlayout: post\r\ntitle: \"" + title + "\"\r\n---\r\n" + content + "").toString('base64')
+      content: Buffer.from("---\r\nlayout: post\r\ntitle: \"" + title + "\"\r\ndate: " + n.toISOString() + "\r\n---\r\n" + content + "").toString('base64')
     }).then(function(x) {
 
       const response = {
