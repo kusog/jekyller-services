@@ -1,9 +1,9 @@
 'use strict';
 const octokit = require('@octokit/rest')()
 
-const username = "[username]";
-const password = "[password]";
-const reponame = "[reponame]";
+const username = process.env.REPO_UID;
+const password = process.env.REPO_PWD;
+const reponame = process.env.SITE_REPO;
 
 Number.prototype.pad = function(size) {
   var s = String(this);
@@ -58,14 +58,12 @@ module.exports.updateContent = (event, context, callback) => {
       callback(null, response);
     });
   });
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // callback(null, { message: 'Go Serverless v1.0! Your function executed successfully!', event });
 };
 
 module.exports.createPost = (event, context, callback) => {
   var content = event.content,
       name = event.name,
+      createDate = event.date,
       title = event.title;
 
       
@@ -73,21 +71,26 @@ module.exports.createPost = (event, context, callback) => {
     var message = JSON.parse(event.body);
     content = message.content;
     name = message.name;
+    createDate = message.date;
     title = message.title;
+  }
+
+  if(content) {
+    content = content.trim();
   }
 
   var n = new Date();
   var fileName = name;
   if(!name) {
     fileName = "_posts/" + n.getFullYear() + "-" + (n.getMonth() +1).pad(2) + "-" + n.getDate().pad(2) + "-" + title + ".html";
+    createDate = n.toISOString();
   }
   else {
     fileName = "_posts/" + name + ".html";
   }
   fileName = fileName.toLowerCase();
   fileName = fileName.replace(/\s+/g, "-");
-  //var fileName = "_posts/2018-02-14-testing3.html";
-
+  
   function update(sha, name, content) {
     octokit.repos.createFile({
       owner: username,
@@ -95,7 +98,7 @@ module.exports.createPost = (event, context, callback) => {
       path: name,
       message: 'updating file',
       sha: sha,
-      content: Buffer.from("---\r\nlayout: post\r\ntitle: \"" + title + "\"\r\ndate: " + n.toISOString() + "\r\n---\r\n" + content + "").toString('base64')
+      content: Buffer.from("---\r\nlayout: post\r\ntitle: \"" + title + "\"\r\ndate: " + createDate + "\r\n---\r\n" + content + "").toString('base64')
     }).then(function(x) {
 
       const response = {

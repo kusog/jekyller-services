@@ -20,7 +20,8 @@ service: mjd-services
 provider:
   name: aws
   runtime: nodejs6.10
-
+  environment: ${file(./env.yml)}
+  
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
