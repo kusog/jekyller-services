@@ -8,3 +8,7 @@ Jekyll's _post directory.
 1. Clone or download this repository
 2. Rename _example.env.yml_ to _env.yml_ and set [environment variables]. 
 3. Run `serverless deploy` 
+
+## Using Jekyller in a Jekyll website
+A basic Jekyller starter site that uses bootstrap 4, jQuery 3, and uses Jekyller services for dynamically
+editing content and creating posts.  The repo can be found at https://github.com/kusog/jekyller-webclient
