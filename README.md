@@ -1,5 +1,5 @@
 # Jekyller Services
-[Serverless](https://serverless.com/) nodesjs services setup for AWS lambda that aims to be an optional set of 
+[Serverless](https://serverless.com/) nodesjs services setup for [AWS Lambdas](https://aws.amazon.com/lambda/) that aims to be an optional set of 
 CMS type services designed to store core content within a github repo.
 
 These CMS services are designed to work specifically with [Jekyll site structures](https://jekyllrb.com/), 
