@@ -22,7 +22,7 @@ site, but also use these to add more interactive administrative services to the 
 Hosted sites in github pages are free, which gives you a versioned continuous deployment based 
 website which can optionally have its own domain name you purchase.  The first 1 million calls
 to Amazon Lambda based services are free, and after that cost very little.  **For most sites, that
-means the total cost to host your site is the cost of the domain name.**  
+means the total cost to host your site and services is the cost of the domain name.**  
 
 Anther major benefit from this type of system is that the content of the site automatically gets versioning for
 all the pages and posts in the site.  Future work of this project could include showing the commit history of
