@@ -14,7 +14,7 @@ functions:
       - http:
           path: updateContent
           method: post
-        cors: true
+          cors: true
         allowCredentials: false
   
   createPost:
@@ -23,6 +23,6 @@ functions:
       - http:
           path: createPost
           method: post
-        cors: true
+          cors: true
         allowCredentials: false
         

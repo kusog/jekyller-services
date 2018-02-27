@@ -1,5 +1,5 @@
 'use strict';
-const octokit = require('@octokit/rest')()
+const octokit = require('@octokit/rest')();
 
 const username = process.env.REPO_UID;
 const password = process.env.REPO_PWD;
@@ -11,16 +11,16 @@ Number.prototype.pad = function(size) {
   return s;
 }
 module.exports.updateContent = (event, context, callback) => {
-  var content = event.content,
-      name = event.name;
+  var content = event.content;
 
   if(!content && event.body) {
-    var msg = JSON.parse(event.body);
+    var msg = (typeof event.body == "string") ? JSON.parse(event.body) : event.body;
     content = msg.content;
-    name = msg.name;
   }
 
-  console.log("event:" + JSON.stringify(event));
+  if(content) {
+    content = content.trim();
+  }
 
   octokit.authenticate({
       type: 'basic',
@@ -46,8 +46,7 @@ module.exports.updateContent = (event, context, callback) => {
         statusCode: 200,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          "Content-Type":"application/json",
-          "Access-Control-Allow-Credentials": true
+          "Content-Type":"application/json"
         },
         body: JSON.stringify({
           message: 'Changes upgraded successfully!',
@@ -68,37 +67,40 @@ module.exports.createPost = (event, context, callback) => {
 
       
   if(!content && event.body) {
-    var message = JSON.parse(event.body);
-    content = message.content;
-    name = message.name;
-    createDate = message.date;
-    title = message.title;
+    var msg = (typeof event.body == "string") ? JSON.parse(event.body) : event.body;
+    content = msg.content;
+    name = msg.name;
+    createDate = msg.date;
+    title = msg.title;
   }
 
   if(content) {
     content = content.trim();
   }
 
+  if(title) {
+    title = title.trim();
+  }
+  
   var n = new Date();
   var fileName = name;
   if(!name) {
-    fileName = "_posts/" + n.getFullYear() + "-" + (n.getMonth() +1).pad(2) + "-" + n.getDate().pad(2) + "-" + title + ".html";
+    name = n.getFullYear() + "-" + (n.getMonth() +1).pad(2) + "-" + n.getDate().pad(2) + "-" + title;
     createDate = n.toISOString();
   }
-  else {
-    fileName = "_posts/" + name + ".html";
-  }
+
+  fileName = "_posts/" + name + ".html";
   fileName = fileName.toLowerCase();
   fileName = fileName.replace(/\s+/g, "-");
   
-  function update(sha, name, content) {
+  function update(sha, path, content) {
     octokit.repos.createFile({
       owner: username,
       repo: reponame,
-      path: name,
+      path: path,
       message: 'updating file',
       sha: sha,
-      content: Buffer.from("---\r\nlayout: post\r\ntitle: \"" + title + "\"\r\ndate: " + createDate + "\r\n---\r\n" + content + "").toString('base64')
+      content: Buffer.from("---\r\nlayout: post\r\ntitle: \"" + title + "\"\r\ndate: " + createDate + "\r\nname: " + name + "\r\n---\r\n" + content + "").toString('base64')
     }).then(function(x) {
 
       const response = {
@@ -106,7 +108,7 @@ module.exports.createPost = (event, context, callback) => {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Content-Type":"application/json",
-          "Access-Control-Allow-Credentials": true
+          "Access-Control-Allow-Credentials": false
         },
         body: JSON.stringify({
           message: 'Changes upgraded successfully!',
